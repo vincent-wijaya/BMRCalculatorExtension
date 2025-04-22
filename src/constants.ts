@@ -1,12 +1,12 @@
-interface BMRConstants {
-  minAge: number;
+// interface BMRConstants {
+//   minAge: number;
 
-  maxAge?: number;
+//   maxAge?: number;
 
-  multiple: number;
+//   multiple: number;
 
-  additive: number;
-}
+//   additive: number;
+// }
 
 /**
   
@@ -30,11 +30,13 @@ export const BMR_CONSTANTS = {
     },
     {
       minAge: 31,
+      maxAge: 61,
       multiple: 11.472,
       additive: 873.1,
     },
     {
       minAge: 61,
+      maxAge: 100,
       multiple: 9.247,
       additive: 587.7,
     },
@@ -43,16 +45,19 @@ export const BMR_CONSTANTS = {
   women: [
     {
       minAge: 18,
+      maxAge: 31,
       multiple: 14.818,
       additive: 486.6,
     },
     {
       minAge: 31,
+      maxAge: 61,
       multiple: 8.126,
       additive: 845.6,
     },
     {
       minAge: 61,
+      maxAge: 100,
       multiple: 9.082,
       additive: 658.5,
     },

@@ -21,7 +21,7 @@
    */
 
 export const BMR_CONSTANTS = {
-  men: [
+  male: [
     {
       minAge: 18,
       maxAge: 31,
@@ -41,8 +41,7 @@ export const BMR_CONSTANTS = {
       additive: 587.7,
     },
   ],
-
-  women: [
+  female: [
     {
       minAge: 18,
       maxAge: 31,
@@ -64,41 +63,35 @@ export const BMR_CONSTANTS = {
   ],
 };
 
-export const PHYSICAL_ACTIVITY_LEVELS = [
-  {
+export const PHYSICAL_ACTIVITY_LEVELS = {
+  bed_rest:{
     name: "Bed Rest",
-    code: "bed-rest",
     description: "Little or no physical activity. Most of the day is spent sitting, with minimal physical exertion beyond routine activities like walking to the car or doing light household tasks.",
     multiplier: 1.2,
   },
-  {
+  sedentary_1:{
     name: "Sedentary",
-    code: "sedentary-1",
     description: "Some light physical activity beyond their regular daily routine. e.g. walking, or light exercise like casual walking or stretching a few days a week.",
     multiplier: 1.3,
   },
-  {
+  sedentary_2: {
     name: "Sedentary",
-    code: "sedentary-2",
     description: "Some light physical activity beyond their regular daily routine. e.g. walking, or light exercise like casual walking or stretching a few days a week.",
     multiplier: 1.4,
   },
-  {
+  light: {
     name: "Light",
-    code: "light",
     description: "Moderate-intensity exercise or physical labor. e.g. walking, cycling, or light jogging for 30-60 minutes a day, or performing moderate-intensity labor like retail work.",
     multiplier: 1.6,
   },
-  {
+  moderate: {
     name: "Moderate",
-    code: "moderate",
     description: "Regular hard physical activity which includes more intense exercise or physically demanding jobs. e.g. vigorous exercise (running, swimming, high-intensity workouts), manual labor, athletes in training, or those with physically active jobs.",
     multiplier: 1.8,
   },
-  {
+  heavy:{
     name: "Heavy",
-    code: "heavy",
     description: "Super active individuals who engage in very high levels of activity or extreme physical demands, often several hours a day. e.g. athletes who train intensively or people doing physically demanding jobs for extended periods.",
     multiplier: 2,
   },
-];
+};

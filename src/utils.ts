@@ -1,12 +1,8 @@
-import { BMR_CONSTANTS, PHYSICAL_ACTIVITY_LEVELS } from "./constants";
+import { BMR_CONSTANTS, KCAL_TO_KJ_MULTIPLIER, PHYSICAL_ACTIVITY_LEVELS } from "./constants";
 import { ActivityLevel } from "./interfaces/IActivityLevel";
 import { Sex } from "./interfaces/ISex";
 
-export const calculateBMR = (
-  age: number,
-  weight: number,
-  sex: Sex
-): number => {
+export const calculateBMR = (age: number, weight: number, sex: Sex): number => {
   const constants = BMR_CONSTANTS[sex].find((constant) => {
     return constant.minAge <= age && age < constant.maxAge;
   });
@@ -17,10 +13,7 @@ export const calculateBMR = (
   return constants.multiple * weight + constants.additive;
 };
 
-export const calculateEnergyRequirement = (
-  bmr: number,
-  activityLevelMultiplier: number,
-): number => {
+export const calculateEnergyRequirement = (bmr: number, activityLevelMultiplier: number): number => {
   return bmr * activityLevelMultiplier;
 }
 
@@ -29,14 +22,14 @@ export const calculateEnergyRequirement = (
  * @param energyRequirement
  * @returns 
  */
-export const calculateEER = (
-  energyRequirement: number
-): number => {
+export const calculateEER = (energyRequirement: number): number => {
   return energyRequirement - 500;
 }
 
-export const getActivityLevelDescription =(
-  activityLevel: ActivityLevel
-): string => {
+export const getActivityLevelDescription = (activityLevel: ActivityLevel): string => {
   return PHYSICAL_ACTIVITY_LEVELS[activityLevel].description;
+}
+
+export const convertKCalToKJ = (calories: number) => {
+  return calories * KCAL_TO_KJ_MULTIPLIER;
 }

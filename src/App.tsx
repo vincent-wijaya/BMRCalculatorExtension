@@ -3,7 +3,7 @@ import "./App.css";
 import { useState } from "react";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Sex } from "./interfaces/ISex";
-import { calculateBMR, calculateEER, calculateEnergyRequirement } from "./utils";
+import { calculateBMR, calculateEER, calculateEnergyRequirement, convertKCalToKJ } from "./utils";
 
 function App() {
   const [sex, setSex] = useState<Sex>();
@@ -157,28 +157,32 @@ function App() {
         </FormControl>
         {
           bmr && energyRequirement && energyRequirementSubtracted && (
-            <div className="mt-6 text-center">
+            <div className="mt-3 text-center">
               <h2 className="font-semibold text-black">Result</h2>
               <h2 className="text-black justify-between">
                 BMR:{" "}
                 <span id="bmr" className="text-orange-500 font-bold">
-                  {bmr > 0 ? bmr : 0}
+                  {bmr}
                 </span>{" "}
                 kcal/d
               </h2>
               <h2 className="text-black">
                 EER:{" "}
                 <span id="energy-requirement" className="text-orange-500 font-bold">
-                  {energyRequirement > 0 ? energyRequirement : 0}
+                  {energyRequirement}
                 </span>{" "}
                 kcal/d
               </h2>
               <h2 className="text-black">
                 EER - {DEFICIT}:{" "}
-                <span id="energy-requirement-subtracted" className="text-orange-500 font-bold">
-                  {energyRequirementSubtracted > 0 ? energyRequirementSubtracted : 0}
+                <span id="energy-requirement-subtracted-kcal" className="text-orange-500 font-bold">
+                  {energyRequirementSubtracted}
                 </span>{" "}
-                kcal/d
+                kcal/d or{" "}
+                <span id="energy-requirement-subtracted-kj" className="text-orange-500 font-bold">
+                  {Math.round(convertKCalToKJ(energyRequirementSubtracted))}
+                </span>{" "}
+                kJ/d
               </h2>
             </div>
           )

@@ -63,6 +63,8 @@ export const BMR_CONSTANTS = {
   ],
 };
 
+export const KCAL_TO_KJ_MULTIPLIER = 4.184;
+
 export const MIN_AGE = 18;
 
 export const MIN_ACTIVITY_LEVEL = 1.1;

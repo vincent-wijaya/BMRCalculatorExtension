@@ -63,6 +63,8 @@ export const BMR_CONSTANTS = {
   ],
 };
 
+export const MIN_AGE = 18;
+
 export const MIN_ACTIVITY_LEVEL = 1.1;
 export const MAX_ACTIVITY_LEVEL = 2.0;
 export const DEFICIT = 500; // kcal/d

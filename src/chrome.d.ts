@@ -1,3 +1,1 @@
-declare global {
-  const chrome: typeof import('chrome');
-}
+/// <reference types="chrome" />

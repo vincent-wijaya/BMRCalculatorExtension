@@ -17,15 +17,28 @@ export const calculateBMR = (
   return constants.multiple * weight + constants.additive;
 };
 
-export const calculateTDEE = (
-  age: number,
-  weight: number,
-  sex: Sex,
+export const calculateEnergyRequirement = (
+  bmr: number,
   activityLevel: ActivityLevel,
 ): number => {
-  const bmr = calculateBMR(age, weight, sex);
-  
   const activityLevelMultiplier = PHYSICAL_ACTIVITY_LEVELS[activityLevel].multiplier;
 
   return Math.round(bmr * activityLevelMultiplier);
+}
+
+/**
+ * Calculates the Estimated Energy Requirement per day with 500kcal/d deficit 
+ * @param energyRequirement
+ * @returns 
+ */
+export const calculateEER = (
+  energyRequirement: number
+): number => {
+  return energyRequirement - 500;
+}
+
+export const getActivityLevelDescription =(
+  activityLevel: ActivityLevel
+): string => {
+  return PHYSICAL_ACTIVITY_LEVELS[activityLevel].description;
 }

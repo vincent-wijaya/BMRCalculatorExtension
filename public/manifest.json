@@ -6,9 +6,6 @@
   "permissions": [
     "windows"
   ],
-  "background": {
-    "service_worker": "src/background.js"
-  },
   "action": {
     "default_popup": "index.html",
     "default_icon": "icon.png"

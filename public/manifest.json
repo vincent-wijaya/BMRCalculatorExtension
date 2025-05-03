@@ -1,8 +1,14 @@
 {
   "name": "BMR Calculator",
-  "description": "A simple BMR calculator Google Chrome Extension.",
+  "description": "A simple Energy Requirement calculator Google Chrome Extension.",
   "version": "1.0",
   "manifest_version": 3,
+  "permissions": [
+    "windows"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": "icon.png"

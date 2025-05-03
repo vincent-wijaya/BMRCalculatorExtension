@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import Icon from '@mdi/react';
+import { mdiOpenInNew } from '@mdi/js';
+
 import { DEFICIT, MAX_ACTIVITY_LEVEL, MIN_ACTIVITY_LEVEL, MIN_AGE } from "./constants";
 import "./App.css";
-import { useState } from "react";
-import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Sex } from "./interfaces/ISex";
 import { calculateBMR, calculateEER, calculateEnergyRequirement, convertKCalToKJ } from "./utils";
 
@@ -14,6 +17,25 @@ function App() {
   const [energyRequirement, setEnergyRequirement] = useState<number>(0);
   const [energyRequirementSubtracted, setEnergyRequirementSubtracted] = useState<number>(0);
   const [errors, setErrors] = useState<string[]>([]);
+
+  const [isCurrentPopup, setIsCurrentPopup] = useState(false);
+  useEffect(() => {
+    if (typeof chrome !== 'undefined' && chrome.windows) {
+      chrome.windows.getCurrent((currentWindow) => {
+        setIsCurrentPopup(currentWindow.type === 'popup');
+      });
+    }
+  }, []);
+
+  const openNewExtensionWindow = () => {
+    chrome.windows.create({
+      url: chrome.runtime.getURL('index.html'), // Open a local extension page
+      type: 'popup',
+      width: 400,
+      height: 450,
+      focused: true,
+    });
+  };
 
   const validate = (): boolean => {
     const currentErrors: string[] = [];
@@ -57,10 +79,19 @@ function App() {
 
   return (
     <div className="flex items-center justify-center">
+      {!isCurrentPopup && (
+        <button
+          onClick={openNewExtensionWindow}
+          className="fixed top-4 right-4 text-black font-bold p-2 focus:outline-none focus:shadow-outline z-10"
+        >
+          <Icon path={mdiOpenInNew} size={0.7} />
+        </button>
+      )}
       <div className="bg-white rounded-lg shadow-xl px-8 py-4 w-full max-w-md transition-transform" onKeyUp={handleKeyUp}>
         <h1 className="font-bold text-black mb-6 text-center">
           Energy Deficit Calculator
         </h1>
+
         <FormControl className="space-y-1 text-black">
           <RadioGroup
             value={sex}

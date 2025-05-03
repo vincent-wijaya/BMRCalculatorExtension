@@ -19,11 +19,9 @@ export const calculateBMR = (
 
 export const calculateEnergyRequirement = (
   bmr: number,
-  activityLevel: ActivityLevel,
+  activityLevelMultiplier: number,
 ): number => {
-  const activityLevelMultiplier = PHYSICAL_ACTIVITY_LEVELS[activityLevel].multiplier;
-
-  return Math.round(bmr * activityLevelMultiplier);
+  return bmr * activityLevelMultiplier;
 }
 
 /**

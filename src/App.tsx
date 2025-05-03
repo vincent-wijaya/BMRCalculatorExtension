@@ -1,8 +1,7 @@
-import { PHYSICAL_ACTIVITY_LEVELS } from "./constants";
+import { DEFICIT, MAX_ACTIVITY_LEVEL, MIN_ACTIVITY_LEVEL } from "./constants";
 import "./App.css";
 import { useState } from "react";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import { ActivityLevel } from "./interfaces/IActivityLevel";
 import { Sex } from "./interfaces/ISex";
 import { calculateBMR, calculateEER, calculateEnergyRequirement } from "./utils";
 
@@ -10,31 +9,36 @@ function App() {
   const [sex, setSex] = useState<Sex>();
   const [age, setAge] = useState<number>();
   const [weight, setWeight] = useState<number>();
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>();
+  const [activityLevelMultiplier, setActivityLevelMultiplier] = useState<number>();
   const [bmr, setBmr] = useState<number>(0);
   const [energyRequirement, setEnergyRequirement] = useState<number>(0);
   const [energyRequirementSubtracted, setEnergyRequirementSubtracted] = useState<number>(0);
 
   const handleSubmit = () => {
-    if (!sex || !age || !weight || !activityLevel) {
+    if (!sex || !age || !weight || !activityLevelMultiplier) {
       alert("Please fill in all fields.");
       return;
     }
 
     const bmr = calculateBMR(age, weight, sex);
-    setBmr(bmr);
+    setBmr(Math.round(bmr));
 
-    const energyRequirement = calculateEnergyRequirement(bmr, activityLevel);
-    setEnergyRequirement(energyRequirement);
+    const energyRequirement = calculateEnergyRequirement(bmr, activityLevelMultiplier);
+    setEnergyRequirement(Math.round(energyRequirement));
 
     const energyRequirementSubtracted = calculateEER(energyRequirement);
-    setEnergyRequirementSubtracted(energyRequirementSubtracted);
+    setEnergyRequirementSubtracted(Math.round(energyRequirementSubtracted));
   }
 
+  const handleKeyUp = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  }
 
   return (
     <div className="flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl px-8 py-4 w-full max-w-md transition-transform">
+      <div className="bg-white rounded-lg shadow-xl px-8 py-4 w-full max-w-md transition-transform" onKeyUp={handleKeyUp}>
         <h1 className="font-bold text-black mb-6 text-center">
           Energy Deficit Calculator
         </h1>
@@ -75,7 +79,7 @@ function App() {
                 htmlFor="weight"
                 className="block text-sm font-medium text-black"
               >
-                Weight (kg):
+                Adjusted Body Weight (kg):
               </label>
               <input
                 value={weight}
@@ -98,23 +102,19 @@ function App() {
             >
               Activity Level:
             </label>
-            <select
-              value={activityLevel}
-              onChange={(e) => setActivityLevel(e.target.value as ActivityLevel)}
-              id="activity"
-              name="activity"
+            <input
+              value={activityLevelMultiplier}
+              type="number"
+              id="activity-level"
+              name="weight"
+              color=""
+              min={MIN_ACTIVITY_LEVEL}
+              max={MAX_ACTIVITY_LEVEL}
               required
-              className="w-full px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            >
-              <option value="" disabled selected>
-                Select your activity level
-              </option>
-              {Object.entries(PHYSICAL_ACTIVITY_LEVELS).map(([key, level]) => (
-                <option key={key} value={key}>
-                  {level.name} ({level.multiplier})
-                </option>
-              ))}
-            </select>
+              className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter your weight"
+              onChange={(e) => setActivityLevelMultiplier(Number(e.target.value))}
+            />
           </div>
 
           <button
@@ -129,26 +129,26 @@ function App() {
           bmr && energyRequirement && energyRequirementSubtracted && (
             <div className="mt-6 text-center">
               <h2 className="font-semibold text-black">Result</h2>
-              <h2 className="text-black">
-                The BMR is:{" "}
+              <h2 className="text-black justify-between">
+                BMR:{" "}
                 <span id="bmr" className="text-orange-500 font-bold">
                   {bmr > 0 ? bmr : 0}
                 </span>{" "}
-                kcal/day
+                kcal/d
               </h2>
               <h2 className="text-black">
-                Your daily estimated energy requirement is:{" "}
+                EER:{" "}
                 <span id="energy-requirement" className="text-orange-500 font-bold">
                   {energyRequirement > 0 ? energyRequirement : 0}
                 </span>{" "}
-                kcal/day
+                kcal/d
               </h2>
               <h2 className="text-black">
-                The daily estimated energy requirement with 500kcal deficit is:{" "}
+                EER - {DEFICIT}:{" "}
                 <span id="energy-requirement-subtracted" className="text-orange-500 font-bold">
                   {energyRequirementSubtracted > 0 ? energyRequirementSubtracted : 0}
                 </span>{" "}
-                kcal/day
+                kcal/d
               </h2>
             </div>
           )

@@ -58,6 +58,18 @@ function App() {
     return errors.length === 0;
   }
 
+  const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAge(e.target.value === "" ? undefined : Number(e.target.value));
+  };
+
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWeight(e.target.value === "" ? undefined : Number(e.target.value));
+  };
+
+  const handleActivityLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setActivityLevel(e.target.value === "" ? undefined : Number(e.target.value));
+  };
+
   const handleSubmit = () => {
     if (!validate()) return;
 
@@ -115,12 +127,11 @@ function App() {
               value={age}
               type="number"
               id="age"
-              name="age"
+              name="Age"
               min={MIN_AGE}
-              required
               className="w-full px-4 py-1 text-black rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter the age"
-              onChange={(e) => setAge(Number(e.target.value))}
+              onChange={(e) => handleAgeChange(e)}
             />
           </div>
 
@@ -135,12 +146,10 @@ function App() {
               value={weight}
               type="number"
               id="weight"
-              name="weight"
-              color=""
-              required
+              name="Weight"
               className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter the weight"
-              onChange={(e) => setWeight(Number(e.target.value))}
+              onChange={(e) => handleWeightChange(e)}
             />
           </div>
 
@@ -155,14 +164,12 @@ function App() {
               value={activityLevel}
               type="number"
               id="activity-level"
-              name="weight"
-              color=""
+              name="Activity Level "
               min={MIN_ACTIVITY_LEVEL}
               max={MAX_ACTIVITY_LEVEL}
-              required
               className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter the activity level"
-              onChange={(e) => setActivityLevel(Number(e.target.value))}
+              onChange={(e) => handleActivityLevelChange(e)}
             />
           </div>
 

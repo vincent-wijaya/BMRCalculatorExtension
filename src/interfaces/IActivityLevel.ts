@@ -1,1 +1,1 @@
-export type ActivityLevel = 'bed_rest' | 'sedentary_1' | 'sedentary_2' | 'light' | 'moderate' | 'heavy';
+export type ActivityLevel = 'bed_rest' | 'sedentary' | 'light' | 'moderate' | 'heavy';

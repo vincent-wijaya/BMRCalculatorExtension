@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import Icon from '@mdi/react';
-import { mdiOpenInNew } from '@mdi/js';
+import { mdiHelpCircleOutline, mdiOpenInNew } from '@mdi/js';
 
 import { DEFICIT, MAX_ACTIVITY_LEVEL, MIN_ACTIVITY_LEVEL, MIN_AGE } from "./constants";
 import "./App.css";
 import { Sex } from "./interfaces/ISex";
 import { calculateBMR, calculateEER, calculateEnergyRequirement, convertKCalToKJ } from "./utils";
+import ActivityLevelHint from "./components/ActivityLevelHint";
 
-function App() {
+const App = () => {
   const [sex, setSex] = useState<Sex>();
   const [age, setAge] = useState<number>();
   const [weight, setWeight] = useState<number>();
@@ -17,6 +18,14 @@ function App() {
   const [energyRequirement, setEnergyRequirement] = useState<number>(0);
   const [energyRequirementSubtracted, setEnergyRequirementSubtracted] = useState<number>(0);
   const [errors, setErrors] = useState<string[]>([]);
+
+  const [showHint, setShowHint] = useState(false);
+  const handleHintClose = () => {
+    setShowHint(false);
+  };
+  const handleHintOpen = () => {
+    setShowHint(true);
+  };
 
   const [isCurrentPopup, setIsCurrentPopup] = useState(false);
   useEffect(() => {
@@ -171,6 +180,13 @@ function App() {
               placeholder="Enter the activity level"
               onChange={(e) => handleActivityLevelChange(e)}
             />
+            <button
+              type="button"
+              onClick={handleHintOpen}
+              className="text-blue-500 hover:text-blue-700 text-sm font-semibold mt-1"
+            >
+              <Icon path={mdiHelpCircleOutline} size={0.7} />
+            </button>
           </div>
 
           <button
@@ -226,6 +242,7 @@ function App() {
           )
         }
       </div>
+      <ActivityLevelHint show={showHint} close={handleHintClose} />
     </div>
   );
 }

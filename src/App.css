@@ -41,3 +41,17 @@
 .read-the-docs {
   color: #888;
 }
+
+::-webkit-scrollbar {
+  width: 6px;        /* vertical scrollbar */
+  height: 6px;       /* horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.4);
+  border-radius: 4px;
+}

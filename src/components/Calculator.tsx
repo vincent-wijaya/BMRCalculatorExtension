@@ -6,15 +6,17 @@ import { mdiHelpCircleOutline, mdiOpenInNew } from '@mdi/js';
 import { DEFICIT, MAX_ACTIVITY_LEVEL, MIN_ACTIVITY_LEVEL, MIN_AGE } from "./../constants";
 import "./../App.css";
 import { Sex } from "./../interfaces/ISex";
-import { calculateBMR, calculateEER, calculateEnergyRequirement, convertKCalToKJ } from "./../utils";
+import { calculateABW, calculateBMR, calculateEER, calculateEnergyRequirement, convertKCalToKJ } from "./../utils";
 import { Link } from "react-router-dom";
 // import ActivityLevelHint from "./../components/ActivityLevelHint";
 
 const Calculator = () => {
   const [sex, setSex] = useState<Sex>();
   const [age, setAge] = useState<number>();
+  const [height, setHeight] = useState<number>();
   const [weight, setWeight] = useState<number>();
   const [activityLevel, setActivityLevel] = useState<number>();
+  const [adjustedBodyWeight, setAdjustedBodyWeight] = useState<number>(0);
   const [bmr, setBmr] = useState<number>(0);
   const [energyRequirement, setEnergyRequirement] = useState<number>(0);
   const [energyRequirementSubtracted, setEnergyRequirementSubtracted] = useState<number>(0);
@@ -50,10 +52,14 @@ const Calculator = () => {
   const validate = (): boolean => {
     const currentErrors: string[] = [];
 
-    if (!sex || !age || !weight || !activityLevel) {
+    if (!sex || !age || !weight || !height || !activityLevel) {
       currentErrors.push('Missing fields');
       setErrors(currentErrors);
       return false;
+    }
+
+    if (adjustedBodyWeight <= 0) {
+      currentErrors.push('Adjusted Body Weight must be above 0');
     }
 
     if (age < 18) {
@@ -72,6 +78,10 @@ const Calculator = () => {
     setAge(e.target.value === "" ? undefined : Number(e.target.value));
   };
 
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHeight(e.target.value === "" ? undefined : Number(e.target.value));
+  };
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWeight(e.target.value === "" ? undefined : Number(e.target.value));
   };
@@ -80,17 +90,26 @@ const Calculator = () => {
     setActivityLevel(e.target.value === "" ? undefined : Number(e.target.value));
   };
 
+  useEffect(() => {
+    if (height && weight) {
+      const decimalPlaces = 1;
+      const adjustedBodyWeight = Math.round(calculateABW(weight, height / 100) * 10 * decimalPlaces) / (10 * decimalPlaces);
+      setAdjustedBodyWeight(adjustedBodyWeight);
+    }
+  }, [height, weight]);
+  
+
   const handleSubmit = () => {
     if (!validate()) return;
 
-    const bmr = calculateBMR(age!, weight!, sex!);
-    setBmr(Math.round(bmr));
+    const bmr = Math.round(calculateBMR(age!, adjustedBodyWeight!, sex!));
+    setBmr(bmr);
 
-    const energyRequirement = calculateEnergyRequirement(bmr, activityLevel!);
-    setEnergyRequirement(Math.round(energyRequirement));
+    const energyRequirement = Math.round(calculateEnergyRequirement(bmr, activityLevel!));
+    setEnergyRequirement(energyRequirement);
 
-    const energyRequirementSubtracted = calculateEER(energyRequirement);
-    setEnergyRequirementSubtracted(Math.round(energyRequirementSubtracted));
+    const energyRequirementSubtracted = Math.round(calculateEER(energyRequirement));
+    setEnergyRequirementSubtracted(energyRequirementSubtracted);
   }
 
   const handleKeyUp = (event: React.KeyboardEvent) => {
@@ -109,9 +128,12 @@ const Calculator = () => {
           <Icon path={mdiOpenInNew} size={0.7} />
         </button>
       )}
-      <div className="bg-white rounded-lg shadow-xl px-8 py-4 w-full max-w-md transition-transform" onKeyUp={handleKeyUp}>
+      <div
+        className="bg-white rounded-lg shadow-xl px-8 py-4 w-full max-w-md transition-transform"
+        onKeyUp={handleKeyUp}
+      >
         <h1 className="font-bold text-black mb-6 text-center">
-          Energy Deficit Calculator
+          Estimated Energy Deficit Calculator
         </h1>
 
         <FormControl className="space-y-1 text-black">
@@ -123,7 +145,11 @@ const Calculator = () => {
             onChange={(e) => setSex(e.target.value as Sex)}
           >
             <FormControlLabel value="male" control={<Radio />} label="Male" />
-            <FormControlLabel value="female" control={<Radio />} label="Female" />
+            <FormControlLabel
+              value="female"
+              control={<Radio />}
+              label="Female"
+            />
           </RadioGroup>
 
           <div className="space-y-1">
@@ -147,10 +173,28 @@ const Calculator = () => {
 
           <div className="space-y-1">
             <label
+              htmlFor="height"
+              className="block text-sm font-medium text-black"
+            >
+              Height (cm):
+            </label>
+            <input
+              value={height}
+              type="number"
+              id="height"
+              name="Height"
+              className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter the height"
+              onChange={(e) => handleHeightChange(e)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label
               htmlFor="weight"
               className="block text-sm font-medium text-black"
             >
-              Adjusted Body Weight (kg):
+              Weight (kg):
             </label>
             <input
               value={weight}
@@ -163,6 +207,18 @@ const Calculator = () => {
             />
           </div>
 
+          {adjustedBodyWeight > 0 && (
+            <div className="space-y-1">
+              <label
+                htmlFor="adjusted-body-weight"
+                className="block text-sm font-medium text-black"
+              >
+                Adjusted Body Weight (kg):
+              </label>
+              {adjustedBodyWeight}
+            </div>
+          )}
+
           <div className="space-y-1 relative">
             <label
               htmlFor="activity"
@@ -170,29 +226,29 @@ const Calculator = () => {
             >
               Activity Level:
             </label>
-            
-            <div className="flex items-center justify-items-stretch">
-            <input
-              value={activityLevel}
-              type="number"
-              id="activity-level"
-              name="Activity Level"
-              min={MIN_ACTIVITY_LEVEL}
-              max={MAX_ACTIVITY_LEVEL}
-              className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter the activity level"
-              onChange={(e) => handleActivityLevelChange(e)}
-            />
-            
-            <button
-              type="button"
-              className="ml-2 text-blue-400 hover:text-blue-500 focus:outline-none"
-            >
-              <Link to="/activity-level-hint">
-                <Icon path={mdiHelpCircleOutline} size={0.7} />
-              </Link>
-            </button>
-          </div>
+
+            <div className="flex items-center justify-items-stretch relative">
+              <input
+                value={activityLevel}
+                type="number"
+                id="activity-level"
+                name="Activity Level"
+                min={MIN_ACTIVITY_LEVEL}
+                max={MAX_ACTIVITY_LEVEL}
+                className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter the activity level"
+                onChange={(e) => handleActivityLevelChange(e)}
+              />
+
+              <button
+                type="button"
+                className=" text-blue-400 hover:text-blue-500 focus:outline-none absolute left-full ml-2"
+              >
+                <Link to="/activity-level-hint">
+                  <Icon path={mdiHelpCircleOutline} size={0.7} />
+                </Link>
+              </button>
+            </div>
           </div>
 
           <button
@@ -206,47 +262,52 @@ const Calculator = () => {
           <div>
             {errors.length > 0 && (
               <div className="text-red-500">
-                {
-                  errors.map((error, index) => (
-                    <p key={index}>{error}</p>
-                  ))
-                }
+                {errors.map((error, index) => (
+                  <p key={index}>{error}</p>
+                ))}
               </div>
             )}
           </div>
         </FormControl>
-        {
-          bmr && energyRequirement && energyRequirementSubtracted && (
-            <div className="mt-3 text-center">
-              <h2 className="font-semibold text-black">Result</h2>
-              <h2 className="text-black justify-between">
-                BMR:{" "}
-                <span id="bmr" className="text-orange-500 font-bold">
-                  {bmr}
-                </span>{" "}
-                kcal/d
-              </h2>
-              <h2 className="text-black">
-                EER:{" "}
-                <span id="energy-requirement" className="text-orange-500 font-bold">
-                  {energyRequirement}
-                </span>{" "}
-                kcal/d
-              </h2>
-              <h2 className="text-black">
-                EER - {DEFICIT}:{" "}
-                <span id="energy-requirement-subtracted-kcal" className="text-orange-500 font-bold">
-                  {energyRequirementSubtracted}
-                </span>{" "}
-                kcal/d or{" "}
-                <span id="energy-requirement-subtracted-kj" className="text-orange-500 font-bold">
-                  {Math.round(convertKCalToKJ(energyRequirementSubtracted))}
-                </span>{" "}
-                kJ/d
-              </h2>
-            </div>
-          )
-        }
+        {bmr && energyRequirement && energyRequirementSubtracted && (
+          <div className="mt-3 text-center">
+            <h2 className="font-semibold text-black">Result</h2>
+            <h2 className="text-black justify-between">
+              BMR:{" "}
+              <span id="bmr" className="text-orange-500 font-bold">
+                {bmr}
+              </span>{" "}
+              kcal/d
+            </h2>
+            <h2 className="text-black">
+              EER:{" "}
+              <span
+                id="energy-requirement"
+                className="text-orange-500 font-bold"
+              >
+                {energyRequirement}
+              </span>{" "}
+              kcal/d
+            </h2>
+            <h2 className="text-black">
+              EER - {DEFICIT}:{" "}
+              <span
+                id="energy-requirement-subtracted-kcal"
+                className="text-orange-500 font-bold"
+              >
+                {energyRequirementSubtracted}
+              </span>{" "}
+              kcal/d or{" "}
+              <span
+                id="energy-requirement-subtracted-kj"
+                className="text-orange-500 font-bold"
+              >
+                {Math.round(convertKCalToKJ(energyRequirementSubtracted))}
+              </span>{" "}
+              kJ/d
+            </h2>
+          </div>
+        )}
       </div>
     </div>
   );

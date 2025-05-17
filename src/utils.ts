@@ -33,3 +33,27 @@ export const getActivityLevelDescription = (activityLevel: ActivityLevel): strin
 export const convertKCalToKJ = (calories: number) => {
   return calories * KCAL_TO_KJ_MULTIPLIER;
 }
+// ABW = ideal weight at bmi 25 + 0.25(actual weight - ideal weight at bmi 25)
+
+// bmi at 25 = height in metres^2 x 25
+
+
+/**
+ * Calculates the ABW (Adjusted Body Weight) based on the given height.
+ * @param weight - Weight in kg
+ * @param height - Height in meters
+ * @returns Adjusted Body Weight
+ */
+export const calculateABW = (weight: number, height: number): number => {
+  const idealWeight = calculateIdealWeightAtBMI25(height);
+  return idealWeight + 0.25 * (weight - idealWeight);
+}
+
+/**
+ * Calculates the ideal weight at BMI 25 based on the given height.
+ * @param height - Height in meters
+ * @returns Ideal weight at BMI 25
+ */
+export const calculateIdealWeightAtBMI25 = (height: number): number => {
+  return Math.pow(height, 2) * 25;
+}

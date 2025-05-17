@@ -1,31 +1,34 @@
 import Icon from "@mdi/react";
 import { PHYSICAL_ACTIVITY_LEVELS } from "../constants";
 import { mdiClose } from "@mdi/js";
+import { Link } from "react-router-dom";
 
-
-interface ActivityLevelHintProps {
-  show: boolean;
-  close: () => void;
-}
-
-const ActivityLevelHint = ({ show, close }: ActivityLevelHintProps) => {
+const ActivityLevelHint = () => {
   const activityLevels = PHYSICAL_ACTIVITY_LEVELS;
 
   return (
-    show && (
-      <div className="fixed inset-0 z-50 bg-white bg-opacity-50 text-black overflow-auto pointer-events-auto p-6">
-        <div className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full mx-auto">
+    (
+      <div className="fixed inset-0 w-full z-50 bg-c9c9c9 bg-opacity-50 text-black overflow-auto pointer-events-auto p-2">
+        <div className="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full mx-auto">
           <h2>Activity Level</h2>
           <ul>
             {Object.entries(activityLevels).map(([key, value]) => (
               <li key={key} className="mb-4">
-                <strong>{value.name}</strong> - {value.multiplier}<br />
-                {value.description} 
+                <div>
+                  <strong>{value.name}</strong> - {value.multiplier}
+                  <br />
+                  {value.description}
+                </div>
+                <div className="text-gray-500">
+                  <strong>Example:</strong> {value.example}
+                </div>
               </li>
             ))}
           </ul>
-          <button onClick={close} className="fixed top-2 right-6">
-            <Icon path={mdiClose} size={1} />
+          <button className="fixed top-4 right-5">
+            <Link to="/">
+              <Icon path={mdiClose} size={1} />
+            </Link>
           </button>
         </div>
       </div>

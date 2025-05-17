@@ -194,7 +194,7 @@ const Calculator = () => {
               htmlFor="weight"
               className="block text-sm font-medium text-black"
             >
-              Weight (kg):
+              Actual Weight (kg):
             </label>
             <input
               value={weight}
@@ -202,7 +202,7 @@ const Calculator = () => {
               id="weight"
               name="Weight"
               className="w-full text-black px-4 py-1 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter the weight"
+              placeholder="Enter the actual weight"
               onChange={(e) => handleWeightChange(e)}
             />
           </div>
